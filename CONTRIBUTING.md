@@ -55,7 +55,18 @@ Iteration notes explain:
 - Mathematical formulas (with plain-language explanations)
 - Algorithms (step-by-step)
 - Key concepts for beginners
+- **Concrete examples** (worked scenarios with real values)
 - How to run, what to expect, known limitations
+
+**Critical:** Always include examples. For every technical concept, formula,
+or algorithm, provide at least one worked example showing:
+
+- Input values
+- Step-by-step execution
+- Output
+- What it means in plain language
+
+Examples make abstract concepts tangible and help spot bugs early.
 
 ### 4. Maintain test coverage
 
@@ -83,6 +94,28 @@ No magic numbers. All parameters live in:
 - Type hints on function signatures
 - Docstrings for modules, classes, and public functions
 - Comments explain _why_, not _what_
+- **Include examples in docstrings** for complex functions
+
+Example docstring format:
+
+```python
+def compute_reward(food: bool, collision: bool) -> float:
+    """Calculate reward for one agent in one step.
+
+    Args:
+        food: Whether the agent ate food this step
+        collision: Whether the agent collided with another agent
+
+    Returns:
+        Total reward (sum of food, collision, survival components)
+
+    Example:
+        >>> compute_reward(food=True, collision=False)
+        1.01  # food_reward (1.0) + survival_bonus (0.01)
+        >>> compute_reward(food=False, collision=True)
+        -0.09  # collision_penalty (-0.1) + survival_bonus (0.01)
+    """
+```
 
 ---
 

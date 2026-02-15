@@ -91,7 +91,42 @@ _Definition, why it matters, and a concrete example._
 
 ---
 
-### 8. Configuration & Parameters
+### 8. Concrete Examples
+
+_This section is CRITICAL. Provide real, worked examples that show the system in action._
+
+_For each major feature or algorithm, include:_
+
+- Input scenario with specific values
+- Step-by-step execution showing intermediate states
+- Final output or result
+- Interpretation of what this means
+
+**Example format:**
+
+#### Example 1: [Descriptive Title]
+
+**Setup:**
+
+- Parameter A = X
+- Parameter B = Y
+- Initial state: ...
+
+**Step-by-step:**
+
+```
+Step 1: ...
+Step 2: ...
+Step 3: ...
+```
+
+**Result:** ...
+
+**What this shows:** _Plain-language interpretation_
+
+---
+
+### 9. Configuration & Parameters
 
 _List every configurable parameter added or changed._
 
@@ -101,7 +136,7 @@ _List every configurable parameter added or changed._
 
 ---
 
-### 9. How to Run
+### 10. How to Run
 
 _Exact commands to install, run, and test this iteration._
 
@@ -118,19 +153,19 @@ python -m pytest ...
 
 ---
 
-### 10. What You Should See
+### 11. What You Should See
 
 _Describe the expected output — console logs, visual window, test results._
 
 ---
 
-### 11. Known Limitations & Bugs
+### 12. Known Limitations & Bugs
 
 _What doesn't work yet? What edge cases exist?_
 
 ---
 
-### 12. Docs Modified
+### 13. Docs Modified
 
 _Which documentation files were updated and what changed._
 
@@ -140,7 +175,7 @@ _Which documentation files were updated and what changed._
 
 ---
 
-### 13. Test Coverage
+### 14. Test Coverage
 
 _Which tests were added? What do they validate?_
 
@@ -150,7 +185,7 @@ _Which tests were added? What do they validate?_
 
 ---
 
-### 14. Version History
+### 15. Version History
 
 | Version | Change                        |
 | ------- | ----------------------------- |
@@ -158,12 +193,12 @@ _Which tests were added? What do they validate?_
 
 ---
 
-### 15. Next Iteration Preview
+### 16. Next Iteration Preview
 
 _What will Iteration XX+1 do? Why is it the logical next step?_
 
 ---
 
-### 16. Questions & Open Issues
+### 17. Questions & Open Issues
 
 _Anything unresolved, uncertain, or that needs discussion._

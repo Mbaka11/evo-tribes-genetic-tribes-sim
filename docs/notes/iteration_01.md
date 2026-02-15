@@ -273,7 +273,166 @@ ticks, or until every agent dies.
 
 ---
 
-### 8. Configuration & Parameters
+### 8. Concrete Examples
+
+This section walks through real scenarios with specific values to show
+exactly how the system works.
+
+#### Example 1: Observation Encoding
+
+**Setup:**
+
+- Agent at position (10, 10)
+- `view_radius` = 2 → agent sees a 5×5 window
+- Grid has food at (9, 11) and another agent (tribe 1) at (11, 10)
+- Agent has 85.0 energy (out of 100.0 initial)
+- Agent belongs to tribe 0 (out of 2 tribes)
+
+**Observation window (centered on agent):**
+
+```
+Row 8:  [empty, empty, empty, empty, empty]
+Row 9:  [empty, empty, food,  empty, empty]
+Row 10: [empty, empty, SELF,  empty, empty]
+Row 11: [empty, empty, agent, empty, empty]
+Row 12: [empty, empty, empty, empty, empty]
+```
+
+**Encoded as flat vector (reading left-to-right, top-to-bottom):**
+
+```python
+[
+  0.0,  0.0,  0.0,  0.0,  0.0,   # row 8
+  0.0,  0.0,  0.25, 0.0,  0.0,   # row 9 (food = 0.25)
+  0.0,  0.0,  0.0,  0.0,  0.0,   # row 10 (self is not encoded)
+  0.0,  0.0,  1.0,  0.0,  0.0,   # row 11 (tribe 1 agent = 1.0)
+  0.0,  0.0,  0.0,  0.0,  0.0,   # row 12
+  0.85,                          # normalized energy (85/100)
+  0.0                            # normalized tribe (0/1 = 0.0 for tribe 0)
+]
+```
+
+**Total: 27 floats** (25 window cells + 2 internal features)
+
+**What this shows:** The agent can "see" food one cell north-east and another
+agent (from tribe 1) two cells south. It knows its own energy level (85%) and
+tribe membership (tribe 0).
+
+---
+
+#### Example 2: Energy Dynamics Over Time
+
+**Setup:**
+
+- Agent starts with 100.0 energy
+- `energy_per_step` = −1.0
+- `energy_from_food` = 15.0
+- Agent eats food at step 3 and step 7
+
+**Energy progression:**
+
+| Step | Action     | Energy Before | Energy Change       | Energy After |
+| ---- | ---------- | ------------- | ------------------- | ------------ |
+| 0    | (reset)    | —             | —                   | 100.0        |
+| 1    | Move north | 100.0         | −1.0 (decay)        | 99.0         |
+| 2    | Move east  | 99.0          | −1.0                | 98.0         |
+| 3    | Move south | 98.0          | −1.0 + 15.0 (food!) | 112.0        |
+| 4    | Stay       | 112.0         | −1.0                | 111.0        |
+| 5    | Move west  | 111.0         | −1.0                | 110.0        |
+| 6    | Move north | 110.0         | −1.0                | 109.0        |
+| 7    | Move east  | 109.0         | −1.0 + 15.0 (food!) | 123.0        |
+| 8    | Move south | 123.0         | −1.0                | 122.0        |
+
+**What this shows:** Energy constantly drains at 1.0 per step. Eating food
+gives a +15.0 boost, extending survival by 15 steps. An agent at 100 energy
+with no food dies at step 100.
+
+---
+
+#### Example 3: Reward Calculation
+
+**Setup:**
+
+- 3 agents in the world
+- Agent 0 moves to a food cell (collision with agent 1)
+- Agent 1 was already on that food cell (collision)
+- Agent 2 moves to an empty cell (no collision)
+
+**Reward breakdown:**
+
+| Agent | Action        | Food? | Collision? | Survival | Total Reward                |
+| ----- | ------------- | ----- | ---------- | -------- | --------------------------- |
+| 0     | Move to (5,5) | Yes   | Yes        | Yes      | +1.0 + (−0.1) + 0.01 = 0.91 |
+| 1     | Stay at (5,5) | No\*  | Yes        | Yes      | 0 + (−0.1) + 0.01 = −0.09   |
+| 2     | Move to (8,3) | No    | No         | Yes      | 0 + 0 + 0.01 = 0.01         |
+
+\*Agent 1 doesn't get the food because agent 0 reached it first (loop order).
+
+**What this shows:**
+
+- Food reward dominates (+1.0)
+- Collision penalty is small but noticeable (−0.1)
+- Survival bonus keeps agents motivated to stay alive even without resources
+- Reward structure encourages: find food, avoid crowds, stay alive
+
+---
+
+#### Example 4: One Complete Step
+
+**Initial state:**
+
+- Agent position: (10, 10)
+- Agent energy: 50.0
+- Agent tribe: 0
+- Grid cell (9, 10): food
+- Grid cell (10, 11): empty
+- Another agent at (10, 11)? No
+
+**Agent action:** `ACTION_NORTH` (1)
+
+**Step-by-step execution:**
+
+1. **Compute desired position:**
+   - Current: (10, 10)
+   - Delta for NORTH: (−1, 0)
+   - Desired: (9, 10)
+   - Clamp check: (9, 10) is within [0, 19] → valid
+
+2. **Collision detection:**
+   - Check all agents' desired positions
+   - Agent is alone at (9, 10) → no collision
+
+3. **Commit position:**
+   - Agent position updated to (9, 10)
+
+4. **Food consumption:**
+   - Grid[9, 10] = TILE_FOOD
+   - Remove food from grid
+   - Agent energy: 50.0 + 15.0 = 65.0
+   - Agent reward: +1.0 (food_reward)
+   - Respawn: place new food at a random empty cell
+
+5. **Energy decay:**
+   - Agent energy: 65.0 + (−1.0) = 64.0
+   - Agent reward: +0.01 (survival_bonus)
+   - Check: 64.0 > 0 → agent stays alive
+
+6. **Total reward this step:** 1.0 + 0.01 = **1.01**
+
+**Result:**
+
+- New position: (9, 10)
+- New energy: 64.0
+- Reward: 1.01
+- Agent alive: True
+
+**What this shows:** A single step involves movement, collision checking,
+resource collection, energy management, and reward accumulation — all
+happening in deterministic order.
+
+---
+
+### 9. Configuration & Parameters
 
 | Parameter           | Default | What It Controls                               |
 | ------------------- | ------- | ---------------------------------------------- |
@@ -294,7 +453,7 @@ ticks, or until every agent dies.
 
 ---
 
-### 9. How to Run
+### 10. How to Run
 
 ```bash
 # Install dependencies
@@ -309,7 +468,7 @@ python -m pytest tests/test_env_smoke.py -v
 
 ---
 
-### 10. What You Should See
+### 11. What You Should See
 
 **Pygame window (560×596 px):**
 
@@ -343,7 +502,7 @@ Episode finished at step 300.
 
 ---
 
-### 11. Known Limitations & Bugs
+### 12. Known Limitations & Bugs
 
 1. **Observation doesn't distinguish "out of bounds" from "empty"** — both
    encode as 0.0. Future iterations may add a wall channel.
@@ -358,7 +517,7 @@ Episode finished at step 300.
 
 ---
 
-### 12. Docs Modified
+### 13. Docs Modified
 
 | Doc File                 | What Changed                                                                   |
 | ------------------------ | ------------------------------------------------------------------------------ |
@@ -366,7 +525,7 @@ Episode finished at step 300.
 
 ---
 
-### 13. Test Coverage
+### 14. Test Coverage
 
 | Test                                       | What It Checks                                  |
 | ------------------------------------------ | ----------------------------------------------- |
@@ -385,7 +544,7 @@ Episode finished at step 300.
 
 ---
 
-### 14. Version History
+### 15. Version History
 
 | Version | Change                                                                 |
 | ------- | ---------------------------------------------------------------------- |
@@ -393,7 +552,7 @@ Episode finished at step 300.
 
 ---
 
-### 15. Next Iteration Preview
+### 16. Next Iteration Preview
 
 **Iteration 2 — Policy Interface & Swappable Agent Brains**
 
@@ -411,7 +570,7 @@ something to operate on.
 
 ---
 
-### 16. Questions & Open Issues
+### 17. Questions & Open Issues
 
 - Should out-of-bounds cells have a distinct encoding (e.g., $-1$) instead of
   sharing $0.0$ with empty cells?
