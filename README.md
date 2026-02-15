@@ -1,7 +1,9 @@
 <div align="center">
-
-  <img src="assets/images/image.png" alt="EvoTribes Banner" style="border: 4px solid white; border-radius: 8px;" width="720" />
-
+  <img src="assets/images/image.png"
+       alt="EvoTribes Banner"
+       style="border: 4px solid white; border-radius: 10px;"
+       width="520"
+       height="220" />
 </div>
 
 <br/>
