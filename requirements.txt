@@ -1,0 +1,15 @@
+# EvoTribes — Dependencies
+
+# Core dependencies
+gymnasium==1.2.3
+numpy==1.23.5
+pygame==2.6.1
+
+# Testing
+pytest==6.2.5
+pytest-cov==4.1.0
+
+# Future dependencies (commented — uncomment when needed)
+# torch>=2.0.0          # for neural network policies (Iteration 2+)
+# matplotlib>=3.7.0     # for plotting metrics (Iteration 4+)
+# pandas>=2.0.0         # for data analysis (Iteration 4+)
