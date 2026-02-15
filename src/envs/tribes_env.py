@@ -95,7 +95,7 @@ class TribesEnv(gym.Env):
     and actions so the outer loop can iterate over agents cleanly.
     """
 
-    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 10}
+    metadata = {"render_modes": ["human", "rgb_array"], "render_fps": 4}
 
     # ------------------------------------------------------------------
     # Construction
