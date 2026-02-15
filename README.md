@@ -33,6 +33,7 @@ Every change is documented, every formula is explained, and every run is reprodu
 | Iteration | Version | Summary                                                  |
 | --------- | ------- | -------------------------------------------------------- |
 | 1         | 0.1.0   | Grid world, random agents, Pygame rendering, smoke tests |
+| 2         | 0.2.0   | Policy interface, RandomPolicy, MLPPolicy (pure NumPy)   |
 
 > Detailed notes for each iteration live in [`docs/notes/`](docs/notes/).
 
@@ -46,16 +47,24 @@ Every change is documented, every formula is explained, and every run is reprodu
 pip install gymnasium numpy pygame pytest
 ```
 
-### 2. Run the demo (random agents, Pygame window)
+### 2. Run the demo
 
 ```bash
-python -m scripts.demo
+# Random policy (baseline)
+python -m scripts.demo --policy random
+
+# MLP policy with random weights (deterministic)
+python -m scripts.demo --policy mlp
+
+# MLP policy (stochastic sampling)
+python -m scripts.demo --policy mlp --stochastic
 ```
 
 ### 3. Run tests
 
 ```bash
-python -m pytest tests/test_env_smoke.py -v
+# All tests (environment + policies)
+python -m pytest tests/ -v
 ```
 
 ---
@@ -80,6 +89,7 @@ EvoTribes/
 ├── assets/images/        # project images
 ├── docs/
 │   ├── notes/            # detailed iteration notes (start here!)
+│   ├── learning/         # educational guides (genetic algorithms, neural nets, RL)
 │   ├── 00_overview.md    # system goals & architecture
 │   ├── 01_environment.md # env spec (obs, actions, rewards)
 │   ├── 02_policies.md    # agent brains
@@ -88,16 +98,60 @@ EvoTribes/
 │   ├── 05_metrics.md
 │   └── 06_alignment_cases.md
 ├── scripts/
-│   └── demo.py           # thin entry points
+│   └── demo.py           # entry point with --policy flag
 ├── src/
-│   └── envs/
-│       ├── tribes_env.py # Gymnasium environment
-│       └── rendering.py  # Pygame renderer
+│   ├── envs/
+│   │   ├── tribes_env.py # Gymnasium environment
+│   │   └── rendering.py  # Pygame renderer
+│   └── policies/
+│       ├── base_policy.py   # abstract interface
+│       ├── random_policy.py # baseline
+│       └── mlp_policy.py    # pure NumPy neural network
 ├── tests/
-│   └── test_env_smoke.py
-├── VERSION               # current version
+│   ├── test_env_smoke.py
+│   └── test_policies.py
+├── VERSION               # current version (0.2.0)
 └── README.md
 ```
+
+---
+
+## Documentation
+
+EvoTribes has **three types of documentation**:
+
+### 📚 [Learning Resources](docs/learning/) — _Learn the concepts_
+
+Educational guides explaining technical concepts from first principles:
+
+- [Genetic Algorithms](docs/learning/genetic_algorithms.md) — complete tutorial with worked examples
+- Neural Networks _(coming soon)_
+- Reinforcement Learning Basics _(coming soon)_
+
+**Start here if you're new to genetic algorithms or RL.**
+
+### 📝 [Iteration Notes](docs/notes/) — _See what was built_
+
+Detailed notes for each iteration explaining what changed and why:
+
+- [Iteration 01](docs/notes/iteration_01.md) — Grid world environment
+- [Iteration 02](docs/notes/iteration_02.md) — Policy interface
+- More to come...
+
+**Read these to understand the project's evolution.**
+
+### 📖 [Main Docs](docs/) — _Reference the system_
+
+Technical specifications and APIs:
+
+- [00_overview.md](docs/00_overview.md) — system architecture
+- [01_environment.md](docs/01_environment.md) — Gymnasium interface
+- [02_policies.md](docs/02_policies.md) — policy implementations
+- And more...
+
+**Use these for API reference and architecture decisions.**
+
+See [DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md) for the full structure.
 
 ---
 
@@ -105,8 +159,8 @@ EvoTribes/
 
 | Iteration | Goal                                                    | Status  |
 | --------- | ------------------------------------------------------- | ------- |
-| 1         | Grid environment, random agents, rendering, tests       | Done    |
-| 2         | Policy interface, random policy, simple MLP policy      | Planned |
+| 1         | Grid environment, random agents, rendering, tests       | ✅ Done |
+| 2         | Policy interface, random policy, MLP policy             | ✅ Done |
 | 3         | Genetic algorithm — evaluate, select, crossover, mutate | Planned |
 | 4         | Metrics logging, run tracking, reproducibility          | Planned |
 | 5         | Scenarios and parameter sweeps                          | Planned |
