@@ -156,6 +156,62 @@ python -m scripts.demo --policy mlp --stochastic
 
 ---
 
+## Expected Behavior (Iteration 2 — Untrained Weights)
+
+At this stage, the MLPPolicy has **random weights** — it hasn't been
+trained or evolved yet. Here's what you'll actually see:
+
+### RandomPolicy
+
+- **Pure chaos** — agents move in completely random directions
+- No pattern recognition, no learning from observation
+- Occasionally eats food by pure chance
+- All agents die around the same time (no survival advantage)
+- Baseline performance: ~50-80 steps average survival
+
+### MLPPolicy (deterministic)
+
+- **Stubborn but stupid** — same observation always produces the same action
+- Gets stuck in repetitive loops (e.g., walking into walls over and over)
+- Might converge on corners or edges of the grid
+- Slightly more "decisive" looking than random, but not actually smarter
+- Still dies quickly — random weights don't encode useful food-seeking strategies
+- Performance: similar to random (~50-80 steps), sometimes worse if stuck
+
+### MLPPolicy (stochastic)
+
+- **Varied but aimless** — samples from the softmax distribution
+- Less repetitive than deterministic mode
+- Breaks out of wall-stuck situations more often
+- Still no intelligent food-seeking behavior
+- Looks similar to RandomPolicy but with subtle biases based on what the network "sees"
+- Performance: ~50-80 steps, slightly better than deterministic due to exploration
+
+### What You WON'T See Yet
+
+❌ Agents moving directly toward food  
+❌ Energy-aware behavior (urgent movement when energy is low)  
+❌ Tribal clustering or cooperation  
+❌ Learning from experience within an episode  
+❌ Improving performance over time
+
+### What Changes After Evolution (Iteration 3 Preview)
+
+After 50-100 generations of genetic algorithm training:
+
+✅ **Food-seeking** — agents recognize food tiles in their observation and move toward them  
+✅ **Wall avoidance** — learned to not waste energy bumping into boundaries  
+✅ **Survival time increases** — from ~60 steps (random) to 150+ steps (evolved)  
+✅ **Emergent strategies** — some agents patrol areas, others ambush near food spawn points  
+✅ **Tribal differences** — different tribes evolve distinct movement patterns  
+✅ **Energy management** — low-energy agents move more aggressively toward food
+
+**Right now**, the MLPPolicy is a _container_ for weights that the GA
+will optimize. Think of Iteration 2 as building the car; Iteration 3 is
+teaching it to drive.
+
+---
+
 ## Policy swap at runtime
 
 Policies are independent from the environment. You can swap a policy
