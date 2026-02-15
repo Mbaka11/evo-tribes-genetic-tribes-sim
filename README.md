@@ -2,7 +2,7 @@
   <img src="assets/images/image.png"
        alt="EvoTribes Banner"
        style="border: 4px solid white; border-radius: 10px;"
-       width="520"
+       width="720"
        height="220" />
 </div>
 
