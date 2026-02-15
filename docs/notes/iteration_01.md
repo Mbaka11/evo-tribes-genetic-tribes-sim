@@ -31,15 +31,15 @@ Iteration 1 exists to **validate the foundation** before building on it.
 
 ### 3. What Was Implemented
 
-| File | Change Type | Description |
-|---|---|---|
-| `src/__init__.py` | Created | Package marker |
-| `src/envs/__init__.py` | Created | Exports `TribesEnv` |
-| `src/envs/tribes_env.py` | Created | Full Gymnasium environment |
-| `src/envs/rendering.py` | Created | Pygame-based renderer |
-| `scripts/demo.py` | Created | Entry point — runs random agents with rendering |
-| `tests/test_env_smoke.py` | Created | 12 smoke tests |
-| `docs/01_environment.md` | Modified | Full environment spec |
+| File                      | Change Type | Description                                     |
+| ------------------------- | ----------- | ----------------------------------------------- |
+| `src/__init__.py`         | Created     | Package marker                                  |
+| `src/envs/__init__.py`    | Created     | Exports `TribesEnv`                             |
+| `src/envs/tribes_env.py`  | Created     | Full Gymnasium environment                      |
+| `src/envs/rendering.py`   | Created     | Pygame-based renderer                           |
+| `scripts/demo.py`         | Created     | Entry point — runs random agents with rendering |
+| `tests/test_env_smoke.py` | Created     | 12 smoke tests                                  |
+| `docs/01_environment.md`  | Modified    | Full environment spec                           |
 
 ---
 
@@ -92,9 +92,10 @@ $$
 $$
 
 Where:
+
 - $r$ = `view_radius` (default 2)
 
-With $r = 2$: obs\_size $= 5^{2} + 2 = 27$ floats.
+With $r = 2$: obs_size $= 5^{2} + 2 = 27$ floats.
 
 **Intuition:** The agent looks around in a 5×5 square (25 cells) and also
 knows its own energy level and which tribe it belongs to.
@@ -103,13 +104,14 @@ knows its own energy level and which tribe it belongs to.
 
 Each cell in the window is encoded as a single float:
 
-| Value | Meaning |
-|---|---|
-| $0.0$ | Empty or out-of-bounds |
-| $0.25$ | Food |
+| Value                             | Meaning                              |
+| --------------------------------- | ------------------------------------ |
+| $0.0$                             | Empty or out-of-bounds               |
+| $0.25$                            | Food                                 |
 | $0.5 + 0.5 \cdot \frac{t}{T - 1}$ | Agent of tribe $t$ out of $T$ tribes |
 
 With 2 tribes:
+
 - Tribe 0 agent → $0.5 + 0.5 \cdot \frac{0}{1} = 0.5$
 - Tribe 1 agent → $0.5 + 0.5 \cdot \frac{1}{1} = 1.0$
 
@@ -126,6 +128,7 @@ E_{t+1} = E_{t} + \Delta_{\text{step}} + \Delta_{\text{food}}
 $$
 
 Where:
+
 - $E_t$ = energy at step $t$
 - $\Delta_{\text{step}}$ = `energy_per_step` (default $-1.0$) — always applied
 - $\Delta_{\text{food}}$ = `energy_from_food` (default $+15.0$) — only if the
@@ -146,13 +149,14 @@ $$
 R = R_{\text{food}} + R_{\text{survival}} + R_{\text{collision}}
 $$
 
-| Component | Value | When |
-|---|---|---|
-| $R_{\text{food}}$ | $+1.0$ | Agent steps on a food cell |
-| $R_{\text{survival}}$ | $+0.01$ | Every step the agent is alive |
-| $R_{\text{collision}}$ | $-0.1$ | Two or more agents occupy the same cell |
+| Component              | Value   | When                                    |
+| ---------------------- | ------- | --------------------------------------- |
+| $R_{\text{food}}$      | $+1.0$  | Agent steps on a food cell              |
+| $R_{\text{survival}}$  | $+0.01$ | Every step the agent is alive           |
+| $R_{\text{collision}}$ | $-0.1$  | Two or more agents occupy the same cell |
 
 **Intuition:**
+
 - Food reward teaches agents to seek resources.
 - Survival bonus provides a tiny signal for "existing is good" — this prevents
   policies from learning to die quickly if food is scarce.
@@ -165,6 +169,7 @@ to learn from.
 #### 5.5 Episode length and survival math
 
 With default parameters:
+
 - `initial_energy` = 100, `energy_per_step` = −1 → an agent that never eats
   survives exactly **100 steps**.
 - `max_steps` = 300 → to survive the full episode, an agent must eat at least:
@@ -270,22 +275,22 @@ ticks, or until every agent dies.
 
 ### 8. Configuration & Parameters
 
-| Parameter | Default | What It Controls |
-|---|---|---|
-| `grid_width` | 20 | Number of columns in the grid |
-| `grid_height` | 20 | Number of rows in the grid |
-| `num_agents` | 6 | Total agents spawned |
-| `num_tribes` | 2 | Tribes (agents assigned round-robin: 0,1,0,1…) |
-| `view_radius` | 2 | Half-size of the observation window |
-| `initial_energy` | 100.0 | Energy each agent starts with |
-| `energy_per_step` | −1.0 | Energy change per step (negative = drain) |
-| `energy_from_food` | 15.0 | Energy gained when eating |
-| `num_food` | 10 | Food items at episode start |
-| `food_respawn` | True | Spawn a new food when one is eaten |
-| `food_reward` | 1.0 | Reward for eating food |
-| `survival_bonus` | 0.01 | Reward for surviving each step |
-| `collision_penalty` | −0.1 | Penalty when agents collide |
-| `max_steps` | 300 | Episode length limit |
+| Parameter           | Default | What It Controls                               |
+| ------------------- | ------- | ---------------------------------------------- |
+| `grid_width`        | 20      | Number of columns in the grid                  |
+| `grid_height`       | 20      | Number of rows in the grid                     |
+| `num_agents`        | 6       | Total agents spawned                           |
+| `num_tribes`        | 2       | Tribes (agents assigned round-robin: 0,1,0,1…) |
+| `view_radius`       | 2       | Half-size of the observation window            |
+| `initial_energy`    | 100.0   | Energy each agent starts with                  |
+| `energy_per_step`   | −1.0    | Energy change per step (negative = drain)      |
+| `energy_from_food`  | 15.0    | Energy gained when eating                      |
+| `num_food`          | 10      | Food items at episode start                    |
+| `food_respawn`      | True    | Spawn a new food when one is eaten             |
+| `food_reward`       | 1.0     | Reward for eating food                         |
+| `survival_bonus`    | 0.01    | Reward for surviving each step                 |
+| `collision_penalty` | −0.1    | Penalty when agents collide                    |
+| `max_steps`         | 300     | Episode length limit                           |
 
 ---
 
@@ -307,6 +312,7 @@ python -m pytest tests/test_env_smoke.py -v
 ### 10. What You Should See
 
 **Pygame window (560×596 px):**
+
 - Dark 20×20 grid with thin lines
 - Green dots = food
 - Blue circles = Tribe 0, Red circles = Tribe 1
@@ -314,6 +320,7 @@ python -m pytest tests/test_env_smoke.py -v
 - Bottom overlay: `Step 42/300 | Alive 6/6 | Agent0 energy 85.0`
 
 **Console output:**
+
 ```
 EvoTribes — Iteration 1 demo
 Grid 20x20, 6 agents, 2 tribes
@@ -329,6 +336,7 @@ Episode finished at step 300.
 ```
 
 **Tests:**
+
 ```
 12 passed in ~0.7s
 ```
@@ -352,35 +360,35 @@ Episode finished at step 300.
 
 ### 12. Docs Modified
 
-| Doc File | What Changed |
-|---|---|
+| Doc File                 | What Changed                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------ |
 | `docs/01_environment.md` | Rewritten: full spec with obs/action/reward tables, config table, run commands |
 
 ---
 
 ### 13. Test Coverage
 
-| Test | What It Checks |
-|---|---|
-| `test_reset_returns_observations_and_info` | `reset()` returns a list + dict |
-| `test_observation_shape` | Each obs matches `observation_space.shape` |
-| `test_observation_values_in_range` | All values in [0, 1] |
-| `test_action_space_type` | Action space is `Discrete(5)` |
-| `test_sample_action_is_valid` | Sampled actions are in range |
-| `test_step_returns_correct_structure` | `step()` returns (list, list, bool, bool, dict) |
-| `test_multiple_steps` | Can run 10 steps without crash |
-| `test_energy_decreases` | Total energy drops after 5 stay-actions |
-| `test_info_keys` | Info dict has `step`, `alive`, `total_energy` |
-| `test_initial_alive_count` | All agents alive after reset |
-| `test_episode_ends_on_max_steps` | Truncation at `max_steps` |
-| `test_episode_ends_when_all_dead` | Termination when all energy = 0 |
+| Test                                       | What It Checks                                  |
+| ------------------------------------------ | ----------------------------------------------- |
+| `test_reset_returns_observations_and_info` | `reset()` returns a list + dict                 |
+| `test_observation_shape`                   | Each obs matches `observation_space.shape`      |
+| `test_observation_values_in_range`         | All values in [0, 1]                            |
+| `test_action_space_type`                   | Action space is `Discrete(5)`                   |
+| `test_sample_action_is_valid`              | Sampled actions are in range                    |
+| `test_step_returns_correct_structure`      | `step()` returns (list, list, bool, bool, dict) |
+| `test_multiple_steps`                      | Can run 10 steps without crash                  |
+| `test_energy_decreases`                    | Total energy drops after 5 stay-actions         |
+| `test_info_keys`                           | Info dict has `step`, `alive`, `total_energy`   |
+| `test_initial_alive_count`                 | All agents alive after reset                    |
+| `test_episode_ends_on_max_steps`           | Truncation at `max_steps`                       |
+| `test_episode_ends_when_all_dead`          | Termination when all energy = 0                 |
 
 ---
 
 ### 14. Version History
 
-| Version | Change |
-|---|---|
+| Version | Change                                                                 |
+| ------- | ---------------------------------------------------------------------- |
 | `0.1.0` | Initial grid environment, Pygame renderer, demo script, 12 smoke tests |
 
 ---
@@ -398,7 +406,7 @@ Episode finished at step 300.
 5. Update `docs/02_policies.md`.
 
 **Why this order?** The genetic algorithm (Iteration 3) evolves policy
-*weights*. We need the policy object to exist first so that evolution has
+_weights_. We need the policy object to exist first so that evolution has
 something to operate on.
 
 ---
