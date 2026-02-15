@@ -17,7 +17,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/).
   - Collision detection with penalties
 - Pygame renderer (`src/envs/rendering.py`)
   - Grid, food, tribe-coloured agents, energy bars, overlay text
+  - Rendering speed: 4 FPS for easier visual tracking
 - Demo script (`scripts/demo.py`) — random agents with real-time rendering
 - Smoke tests (`tests/test_env_smoke.py`) — 12 tests covering reset, step, termination
 - Environment documentation (`docs/01_environment.md`)
 - Iteration notes system (`docs/notes/`)
+- Project documentation (`README.md`, `CONTRIBUTING.md`, `LICENSE`)
+- Dependency management (`requirements.txt`, `.gitignore`)
+- CI/CD pipeline (`.github/workflows/ci.yml`) with automated version tagging

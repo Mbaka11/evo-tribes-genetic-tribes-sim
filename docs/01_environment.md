@@ -122,6 +122,11 @@ Future extensions (not yet implemented):
 
 Implemented in `src/envs/rendering.py` using Pygame.
 
+**Frame rate:** 4 FPS (one frame every 0.25 seconds)
+
+This slower speed makes agent movements easier to follow visually.
+The FPS is configured via `metadata["render_fps"]` in the environment.
+
 Displays:
 
 - Dark grid with lines

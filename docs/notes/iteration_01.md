@@ -477,6 +477,7 @@ python -m pytest tests/test_env_smoke.py -v
 - Blue circles = Tribe 0, Red circles = Tribe 1
 - Tiny green energy bars above agents
 - Bottom overlay: `Step 42/300 | Alive 6/6 | Agent0 energy 85.0`
+- **Rendering speed:** 4 FPS (agents move once every 0.25 seconds, slow enough to track visually)
 
 **Console output:**
 
@@ -556,6 +557,8 @@ Episode finished at step 300.
 
 **Iteration 2 — Policy Interface & Swappable Agent Brains**
 
+#### Technical Components
+
 1. **`BasePolicy`** — an abstract class that defines `select_action(obs) → int`.
 2. **`RandomPolicy`** — wraps the current random logic behind that interface.
 3. **`MLPPolicy`** — a small neural network (random weights, no training yet)
@@ -567,6 +570,108 @@ Episode finished at step 300.
 **Why this order?** The genetic algorithm (Iteration 3) evolves policy
 _weights_. We need the policy object to exist first so that evolution has
 something to operate on.
+
+---
+
+#### What You'll Actually See
+
+**Visually:** The Pygame window will look identical — same grid, same colored
+agents, same food. Nothing changes on screen because we're just refactoring
+how agents make decisions internally.
+
+**Behaviorally — Random Policy:**
+
+When you run the demo with `RandomPolicy`, agents will behave exactly like
+Iteration 1. They'll wander aimlessly, sometimes stumbling onto food by luck,
+sometimes dying from starvation. You'll see:
+
+- Agents moving in random directions each step
+- No pattern or strategy — pure chaos
+- Some agents survive longer by chance (lucky food spawns nearby)
+- Episode typically ends with 3-5 agents alive at step 300 or all dead by step 200
+
+**Behaviorally — MLP Policy (Random Weights):**
+
+When you run the demo with `MLPPolicy`, agents will still behave randomly, but
+with a twist. The neural network has random weights, so it's not intelligent —
+but it will produce **consistent** outputs for the same observation. You might see:
+
+- Agents exhibiting weird but reproducible biases (e.g., always moving north
+  when energy is low, because the random weights happen to favor that output)
+- Slightly different movement patterns than `RandomPolicy` — less uniformly random,
+  more "quirky deterministic chaos"
+- Similar survival rates (still no real strategy)
+- If you reset the demo with the same seed, the MLP agents will make the
+  **exact same sequence of moves** (whereas random agents won't)
+
+**Why this doesn't look impressive:** Neither policy is _learning_ or _evolving_.
+This iteration just sets up the infrastructure. The MLP brain exists, but its
+weights are garbage. Iteration 3 (the genetic algorithm) will evolve those
+weights so that agents actually learn to seek food and survive.
+
+---
+
+#### What You Can Test
+
+**Policy Swapping:**
+
+You'll be able to modify one line in the demo script:
+
+```python
+# Iteration 1 (hardcoded random)
+actions = [env.action_space.sample() for _ in range(env.num_agents)]
+
+# Iteration 2 — swap policies without changing anything else
+policies = [RandomPolicy() for _ in range(env.num_agents)]
+actions = [policies[i].select_action(obs[i]) for i, obs in enumerate(observations)]
+
+# Or use MLP
+policies = [MLPPolicy(obs_size=27, num_actions=5) for _ in range(env.num_agents)]
+actions = [policies[i].select_action(obs[i]) for i, obs in enumerate(observations)]
+```
+
+The environment doesn't care. The renderer doesn't care. Only the policy
+object changes.
+
+**Reproducibility:**
+
+With `MLPPolicy`, you'll be able to save policy weights to a file and reload
+them later, getting the exact same behavior. This is critical for:
+
+- Testing ("does this policy always make the same move in this situation?")
+- Evolution ("save the best policy from generation 42")
+- Debugging ("why did this agent do X? load its policy and replay the scenario")
+
+---
+
+#### What You Won't See (Yet)
+
+- **No learning.** Policies don't improve. MLP weights stay random.
+- **No evolution.** No crossover, no mutation, no fitness selection.
+- **No intelligent behavior.** Agents won't seek food or avoid collisions strategically.
+- **No metrics dashboard.** No plotting, no logging beyond console prints.
+
+Iteration 2 is pure **infrastructure**. It's boring but necessary. Think of it
+as installing the steering wheel and pedals in a car before teaching anyone to
+drive.
+
+---
+
+#### Commands You'll Run
+
+```bash
+# Run with RandomPolicy
+python -m scripts.demo --policy random
+
+# Run with MLPPolicy (random weights)
+python -m scripts.demo --policy mlp
+
+# Run tests
+python -m pytest tests/test_policies.py -v
+```
+
+**Expected output:** Same visual chaos, but with the confidence that you can
+now plug in any policy implementation without breaking the simulation.
 
 ---
 
