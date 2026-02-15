@@ -13,7 +13,7 @@ Code must be:
 
 - **Simple** — readable by someone new to the codebase
 - **Modular** — swappable components that don't break other systems
-- **Documented** — every iteration has detailed notes explaining *why*
+- **Documented** — every iteration has detailed notes explaining _why_
 - **Reproducible** — seeds, configs, and tests ensure consistency
 
 ---
@@ -82,7 +82,7 @@ No magic numbers. All parameters live in:
 - **PEP 8** compliance (with 88-char line limit like Black)
 - Type hints on function signatures
 - Docstrings for modules, classes, and public functions
-- Comments explain *why*, not *what*
+- Comments explain _why_, not _what_
 
 ---
 
