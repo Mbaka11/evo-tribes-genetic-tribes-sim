@@ -32,10 +32,11 @@ Every change is documented, every formula is explained, and every run is reprodu
 
 ## Current Version
 
-| Iteration | Version | Summary                                                  |
-| --------- | ------- | -------------------------------------------------------- |
-| 1         | 0.1.0   | Grid world, random agents, Pygame rendering, smoke tests |
-| 2         | 0.2.0   | Policy interface, RandomPolicy, MLPPolicy (pure NumPy)   |
+| Iteration | Version | Summary                                                      |
+| --------- | ------- | ------------------------------------------------------------ |
+| 1         | 0.1.0   | Grid world, random agents, Pygame rendering, smoke tests     |
+| 2         | 0.2.0   | Policy interface, RandomPolicy, MLPPolicy (pure NumPy)       |
+| 3         | 0.3.0   | Genetic algorithm — selection, crossover, mutation, training |
 
 > Detailed notes for each iteration live in [`docs/notes/`](docs/notes/).
 
@@ -62,10 +63,23 @@ python -m scripts.demo --policy mlp
 python -m scripts.demo --policy mlp --stochastic
 ```
 
-### 3. Run tests
+### 3. Train with the genetic algorithm
 
 ```bash
-# All tests (environment + policies)
+# Quick test run (small population, few generations)
+python -m scripts.train --population 10 --generations 5
+
+# Full training run with defaults
+python -m scripts.train
+
+# Replay the best evolved agent
+python -m scripts.replay --checkpoint runs/default/best_final.npy
+```
+
+### 4. Run tests
+
+```bash
+# All tests (environment + policies + evolution)
 python -m pytest tests/ -v
 ```
 
@@ -100,19 +114,28 @@ EvoTribes/
 │   ├── 05_metrics.md
 │   └── 06_alignment_cases.md
 ├── scripts/
-│   └── demo.py           # entry point with --policy flag
+│   ├── demo.py           # entry point with --policy flag
+│   ├── train.py          # GA training script
+│   └── replay.py         # replay evolved agents
 ├── src/
 │   ├── envs/
 │   │   ├── tribes_env.py # Gymnasium environment
 │   │   └── rendering.py  # Pygame renderer
+│   ├── evolution/
+│   │   ├── fitness.py    # episode-based fitness evaluation
+│   │   ├── selection.py  # tournament selection
+│   │   ├── crossover.py  # uniform crossover
+│   │   ├── mutation.py   # Gaussian mutation + adaptive decay
+│   │   └── population.py # full GA loop orchestrator
 │   └── policies/
 │       ├── base_policy.py   # abstract interface
 │       ├── random_policy.py # baseline
 │       └── mlp_policy.py    # pure NumPy neural network
 ├── tests/
 │   ├── test_env_smoke.py
-│   └── test_policies.py
-├── VERSION               # current version (0.2.0)
+│   ├── test_policies.py
+│   └── test_evolution.py
+├── VERSION               # current version (0.3.0)
 └── README.md
 ```
 
@@ -138,7 +161,7 @@ Detailed notes for each iteration explaining what changed and why:
 
 - [Iteration 01](docs/notes/iteration_01.md) — Grid world environment
 - [Iteration 02](docs/notes/iteration_02.md) — Policy interface
-- More to come...
+- [Iteration 03](docs/notes/iteration_03.md) — Genetic algorithm
 
 **Read these to understand the project's evolution.**
 
@@ -163,7 +186,7 @@ See [DOCUMENTATION_GUIDE.md](docs/DOCUMENTATION_GUIDE.md) for the full structure
 | --------- | ------------------------------------------------------- | ------- |
 | 1         | Grid environment, random agents, rendering, tests       | ✅ Done |
 | 2         | Policy interface, random policy, MLP policy             | ✅ Done |
-| 3         | Genetic algorithm — evaluate, select, crossover, mutate | Planned |
+| 3         | Genetic algorithm — evaluate, select, crossover, mutate | ✅ Done |
 | 4         | Metrics logging, run tracking, reproducibility          | Planned |
 | 5         | Scenarios and parameter sweeps                          | Planned |
 | 6         | Alignment case studies — reward hacking experiments     | Planned |

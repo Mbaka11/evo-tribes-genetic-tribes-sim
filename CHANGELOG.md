@@ -6,6 +6,27 @@ The format follows [Keep a Changelog](https://keepachangelog.com/).
 
 ---
 
+## [0.3.0] — 2026-02-15
+
+### Added
+
+- Genetic algorithm package (`src/evolution/`)
+  - `fitness.py` — `evaluate_agent()` and `evaluate_robust()` for headless episode evaluation
+  - `selection.py` — `tournament_selection()` with configurable tournament size k
+  - `crossover.py` — `uniform_crossover()` for gene-level parent mixing
+  - `mutation.py` — `gaussian_mutate()` with `adaptive_mutation_std()` step-decay schedule
+  - `population.py` — `Population` class orchestrating the full GA loop with logging
+- Training script (`scripts/train.py`) — CLI with argparse for all GA hyperparameters
+- Replay script (`scripts/replay.py`) — load saved .npy chromosomes and render via Pygame
+- Evolution tests (`tests/test_evolution.py`) — 40+ tests across 10 test classes
+- Iteration 03 notes (`docs/notes/iteration_03.md`)
+
+### Changed
+
+- Rewrote `docs/03_genetic_algorithm.md` — full API reference replacing placeholder
+
+---
+
 ## [0.2.0] — 2026-02-15
 
 ### Added
