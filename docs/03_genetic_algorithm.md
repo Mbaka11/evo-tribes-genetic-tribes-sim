@@ -67,14 +67,14 @@ Each generation follows these steps:
 Run one episode with the chromosome loaded into all agents.
 Returns the total reward summed across all agents.
 
-| Parameter      | Type         | Default | Description                   |
-| -------------- | ------------ | ------- | ----------------------------- | ---------------------------- |
-| `chromosome`   | `np.ndarray` | —       | Flat float32 parameter vector |
-| `obs_size`     | `int`        | 27      | Observation vector length     |
-| `num_actions`  | `int`        | 5       | Number of discrete actions    |
-| `hidden_sizes` | `list[int]`  | [16]    | MLP hidden layer widths       |
-| `env_config`   | `dict        | None`   | None                          | Environment config overrides |
-| `seed`         | `int         | None`   | None                          | Environment RNG seed         |
+| Parameter      | Type              | Default | Description                   |
+| -------------- | ----------------- | ------- | ----------------------------- |
+| `chromosome`   | `np.ndarray`      | —       | Flat float32 parameter vector |
+| `obs_size`     | `int`             | 27      | Observation vector length     |
+| `num_actions`  | `int`             | 5       | Number of discrete actions    |
+| `hidden_sizes` | `list[int]`       | [16]    | MLP hidden layer widths       |
+| `env_config`   | `Optional[dict]`  | None    | Environment config overrides  |
+| `seed`         | `Optional[int]`   | None    | Environment RNG seed          |
 
 ### `evaluate_robust(chromosome, num_episodes=3, ...) → float`
 
@@ -85,12 +85,12 @@ Reduces noise from random environment layouts.
 
 Pick `k` random individuals; return a **copy** of the fittest.
 
-| Parameter    | Type            | Default | Description         |
-| ------------ | --------------- | ------- | ------------------- | --------- |
-| `population` | `list[ndarray]` | —       | List of chromosomes |
-| `fitnesses`  | `np.ndarray`    | —       | Fitness values      |
-| `k`          | `int`           | 3       | Tournament size     |
-| `rng`        | `Generator      | None`   | None                | NumPy RNG |
+| Parameter    | Type               | Default | Description         |
+| ------------ | ------------------ | ------- | ------------------- |
+| `population` | `list[ndarray]`    | —       | List of chromosomes |
+| `fitnesses`  | `np.ndarray`       | —       | Fitness values      |
+| `k`          | `int`              | 3       | Tournament size     |
+| `rng`        | `Optional[Generator]` | None | NumPy RNG           |
 
 ### `uniform_crossover(parent_a, parent_b) → np.ndarray`
 
